@@ -24,7 +24,6 @@
   .pad button { padding: 8px 0; }
   .hidden { display: none !important; }
 
-  /* ── 모바일 ── */
   html { -webkit-text-size-adjust: 100%; }
   body { min-height: 100dvh; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
   button, .tile, nav button { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
@@ -58,7 +57,6 @@
 
 <script>
 
-/* ── 모바일: 이미지 저장 ── */
 const COARSE = matchMedia('(pointer: coarse)').matches;
 function deliver(blob, name) {
   if (!COARSE) {
@@ -79,13 +77,11 @@ function deliver(blob, name) {
   });
   document.body.appendChild(box);
 }
-/* ─────────────────────────── 공통 ─────────────────────────── */
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
 const SZ = 640, DPR = Math.min(2, window.devicePixelRatio || 1);
 cv.width = SZ * DPR; cv.height = SZ * DPR; ctx.scale(DPR, DPR);
 const WATER = '#7fd6ff', GLOW = '#b48cff';
 
-// 배경(파편) 미리 그려 두기 — 고정 시드
 const bgCanvas = document.createElement('canvas'); bgCanvas.width = SZ; bgCanvas.height = SZ;
 (function () {
   const g = bgCanvas.getContext('2d'); let s = 7; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
@@ -109,7 +105,6 @@ function stone(x, y, w, h, lit) {
 function pt(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * SZ, y: (e.clientY - r.top) / r.height * SZ }; }
 const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
-/* ─────────────────────── ③ 반 박자 늦은 나 ─────────────────────── */
 const Twin = (() => {
   const A = [".....", "..##.", ".#...", ".#..#", "..#.#", "....."];
   const B = [".....", ".#..#", ".#...", ".#...", "#.#..", ".#..."];
@@ -150,7 +145,6 @@ const Twin = (() => {
   }
   function draw() {
     const now = performance.now(); drawBG();
-    // 거울 경계
     const mx = 320; ctx.strokeStyle = 'rgba(180,200,255,.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(mx, TY - 30); ctx.lineTo(mx - 6, TY + R * CELL / 2); ctx.lineTo(mx + 4, TY + R * CELL + 30); ctx.stroke();
     board(A, LX, TA, false); board(B, RX, TB, true);
     figure(LX, pos(ga, now), false); figure(RX, pos(gb, now), true);
@@ -167,7 +161,6 @@ const Twin = (() => {
   return { name: '거울', file: 'mirror', draw, controls, key };
 })();
 
-/* ─────────────────────────── 틀 ─────────────────────────── */
 const PUZZLES = [Twin];
 let cur = 0;
 function btn(label, fn) { const b = document.createElement('button'); b.className = 'act'; b.textContent = label; b.onclick = fn; return b; }
@@ -183,7 +176,6 @@ cv.addEventListener('pointermove', e => PUZZLES[cur].move && PUZZLES[cur].move(e
 cv.addEventListener('pointerup', e => PUZZLES[cur].up && PUZZLES[cur].up(e));
 document.addEventListener('keydown', e => { if (PUZZLES[cur].key && e.key.startsWith('Arrow')) e.preventDefault(); PUZZLES[cur].key && PUZZLES[cur].key(e.key); });
 
-/* ── 모바일: 판 위를 밀어서 움직이기 ── */
 (function () {
   let sx = null, sy = null;
   cv.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; });
